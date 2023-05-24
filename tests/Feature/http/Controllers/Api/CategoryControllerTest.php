@@ -2,16 +2,10 @@
 
 namespace Tests\Feature\http\Controllers\Api;
 
-use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Traits\TestResources;
-use Tests\Traits\TestSaves;
-use Tests\Traits\TestValidations;
 
 class CategoryControllerTest extends TestCase
 {
@@ -95,9 +89,9 @@ class CategoryControllerTest extends TestCase
 
     public function testStore ()
     {
-        $response = $this->json('POST', route('categories.store',[
+        $response = $this->json('POST', route('categories.store'),[
             'name' => 'test'
-        ]));
+        ]);
 
         $id = $response->json('id');
         $category = Category::find($id);
@@ -109,11 +103,11 @@ class CategoryControllerTest extends TestCase
         $this->assertTrue($response->json('is_active'));
         $this->assertNull($response->json('description'));
 
-        $response = $this->json('POST', route('categories.store',[
+        $response = $this->json('POST', route('categories.store'),[
             'name' => 'test',
             'description' => 'description',
             'is_active' => false
-        ]));
+        ]);
 
         $response
         ->assertJsonFragment([

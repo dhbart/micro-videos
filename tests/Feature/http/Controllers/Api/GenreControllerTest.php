@@ -2,16 +2,11 @@
 
 namespace Tests\Feature\http\Controllers\Api;
 
-use App\Http\Resources\GenreResource;
 use App\Models\Genre;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\Traits\TestResources;
-use Tests\Traits\TestSaves;
-use Tests\Traits\TestValidations;
+
 
 class GenreControllerTest extends TestCase
 {
@@ -95,7 +90,7 @@ class GenreControllerTest extends TestCase
 
     public function testStore ()
     {
-        $response = $this->json('POST', route('genres.store',[
+        $response = $this->json('POST', route('genres.store', [
             'name' => 'test'
         ]));
 
@@ -107,18 +102,15 @@ class GenreControllerTest extends TestCase
             ->assertJson($genre->toArray());
 
         $this->assertTrue($response->json('is_active'));
-        $this->assertNull($response->json('description'));
 
-        $response = $this->json('POST', route('genres.store',[
+        $response = $this->json('POST', route('genres.store'),[
             'name' => 'test',
-            'description' => 'description',
             'is_active' => false
-        ]));
+        ]);
 
         $response
         ->assertJsonFragment([
-            'description' => 'description',
-            'is_active'   => false,
+            'is_active'   => false
         ]);
 
     }
@@ -126,13 +118,11 @@ class GenreControllerTest extends TestCase
     public function testUpdate ()
     {
         $genre = factory(Genre::class)->create([
-            'description' => 'description',
             'is_active' => false
         ]);
         $response = $this->json('PUT', route('genres.update',['genre' => $genre->id ]),
         [
             'name' => 'test',
-            'description' => 'test',
             'is_active'   => true
         ]);
 
@@ -145,20 +135,14 @@ class GenreControllerTest extends TestCase
 
         $response
         ->assertJsonFragment([
-            'description' => 'test',
             'is_active'   => true
         ]);
 
         $response = $this->json('PUT', route('genres.update',['genre' => $genre->id ]),
         [
-            'name' => 'test',
-            'description' => ''
+            'name' => 'test'
         ]);
 
-        $response
-        ->assertJsonFragment([
-            'description' => null
-        ]);
 
     }
 
