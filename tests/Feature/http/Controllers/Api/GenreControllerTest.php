@@ -86,31 +86,24 @@ class GenreControllerTest extends TestCase
 
     public function testUpdate ()
     {
-        $genre = factory(Genre::class)->create([
+        $this->genre = factory(Genre::class)->create([
             'is_active' => false
         ]);
-        $response = $this->json('PUT', route('genres.update',['genre' => $genre->id ]),
-        [
+        $data = [                
             'name' => 'test',
             'is_active'   => true
-        ]);
+        ];
+        $response = $this->assertUpdate($data, $data + [ 'deleted_at' => null]);
 
-        $id = $response->json('id');
-        $genre = Genre::find($id);
+        $response->assertJsonStructure(
+            ['created_at', 'updated_at']
+        );
 
-        $response
-            ->assertStatus(200)
-            ->assertJson($genre->toArray());
-
-        $response
-        ->assertJsonFragment([
-            'is_active'   => true
-        ]);
-
-        $response = $this->json('PUT', route('genres.update',['genre' => $genre->id ]),
-        [
+        $data = [                
             'name' => 'test'
-        ]);
+        ];
+        $this->assertUpdate($data, array_merge($data, ['name' => 'test'] ));
+
 
 
     }
