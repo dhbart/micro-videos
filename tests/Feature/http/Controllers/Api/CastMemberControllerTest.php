@@ -66,7 +66,8 @@ class CastMemberControllerTest extends TestCase
             $response->assertJsonStructure(
                 ['created_at', 'updated_at']
             );
-        }        
+        } 
+        
     }
 
     public function testUpdate ()
