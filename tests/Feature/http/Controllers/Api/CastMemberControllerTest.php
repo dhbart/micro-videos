@@ -67,7 +67,6 @@ class CastMemberControllerTest extends TestCase
                 ['created_at', 'updated_at']
             );
         }        
-
     }
 
     public function testUpdate ()
