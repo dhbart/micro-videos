@@ -1,6 +1,8 @@
 <?php
 declare(strict_types=1);
+
 namespace Tests\Traits;
+
 
 use Illuminate\Foundation\Testing\TestResponse;
 
@@ -8,34 +10,46 @@ trait TestValidations
 {
 
     protected abstract function model();
+
     protected abstract function routeStore();
+
     protected abstract function routeUpdate();
-    
-    protected function assertInvalidationInStore(array $dados, string $rule, array $ruleParams = [])
-    {
-        $response = $this->json('POST', $this->routeStore(), $dados);
-        $fields = array_keys($dados);
+
+    protected function assertInvalidationInStore(
+        array $data,
+        string $rule,
+        $ruleParams = []
+    ) {
+        $response = $this->json('POST', $this->routeStore(), $data);
+        $fields = array_keys($data);
         $this->assertInvalidationFields($response, $fields, $rule, $ruleParams);
     }
 
-    protected function assertInvalidationInUpdate(array $dados, string $rule, array $ruleParams = [])
-    {
-        $response = $this->json('PUT', $this->routeUpdate(), $dados);
-        $fields = array_keys($dados);
+    protected function assertInvalidationInUpdate(
+        array $data,
+        string $rule,
+        $ruleParams = []
+    ) {
+        $response = $this->json('PUT', $this->routeUpdate(), $data);
+        $fields = array_keys($data);
         $this->assertInvalidationFields($response, $fields, $rule, $ruleParams);
     }
 
-    protected function  assertInvalidationFields(TestResponse $response, array $fields, string $rule, array $ruleParams = [])
-    {
-        $response->assertStatus(422)
-                ->assertJsonValidationErrors($fields);
+    protected function assertInvalidationFields(
+        TestResponse $response,
+        array $fields,
+        string $rule,
+        array $ruleParams = []
+    ) {
+        $response
+            ->assertStatus(422)
+            ->assertJsonValidationErrors($fields);
 
         foreach ($fields as $field) {
-            $fieldname = str_replace('_', ' ', $field);
+            $fieldName = str_replace('_', ' ', $field);
             $response->assertJsonFragment([
-                \Lang::get("validation.{$rule}", ['attribute' =>  $fieldname] + $ruleParams)
+                \Lang::get("validation.{$rule}", ['attribute' => $fieldName] + $ruleParams)
             ]);
         }
-                
     }
 }

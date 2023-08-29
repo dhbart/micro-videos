@@ -46,4 +46,19 @@ class CategoryController extends Controller
         $category->delete();
         return response()->noContent(); //204
     }
+
+    protected function model()
+    {
+        return Category::class;
+    }
+
+    protected function rulesStore()
+    {
+        return $this->rules;
+    }
+
+    protected function rulesUpdate()
+    {
+        return $this->rules;
+    }
 }

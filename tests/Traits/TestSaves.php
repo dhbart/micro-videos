@@ -1,5 +1,8 @@
 <?php
+declare(strict_types=1);
+
 namespace Tests\Traits;
+
 
 use Illuminate\Foundation\Testing\TestResponse;
 
@@ -8,7 +11,7 @@ trait TestSaves
     protected abstract function model();
     protected abstract function routeStore();
     protected abstract function routeUpdate();
-    
+
     protected function assertStore(array $sendData, array $testDatabase, array $testJsonData = null): TestResponse
     {
         /** @var TestResponse $response */
@@ -37,19 +40,12 @@ trait TestSaves
     {
         $model = $this->model();
         $table = (new $model)->getTable();
-        $this->assertDatabaseHas($table, $testDatabase + ['id' => $this->getIdFromResponse($response)]);
+        $this->assertDatabaseHas($table, $testDatabase + ['id' => $response->json('id')]);
     }
 
     private function assertJsonResponseContent(TestResponse $response, array $testDatabase, array $testJsonData = null)
     {
         $testResponse = $testJsonData ?? $testDatabase;
-        $response->assertJsonFragment($testResponse + ['id' => $this->getIdFromResponse($response)]);
+        $response->assertJsonFragment($testResponse + ['id' => $response->json('id')]);
     }
-
-    private function getIdFromResponse(TestResponse $response)
-    {
-        return $response->json('id') ?? $response->json('data.id');
-    }
-
-    
 }
