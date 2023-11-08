@@ -33,20 +33,21 @@ class Video extends Model
 
     public $incrementing = false;
     public static $fileFields = ['video_file'];
+
     public static function create(array $attributes = [])
     {
         $files = self::extractFiles($attributes);
         try {
             \DB::beginTransaction();
             /** @var Video $obj */
-            $obj = static::query()->create($attributes);
+            $obj = static::query()->create($attributes); //filme
             static::handleRelations($obj, $attributes);
             $obj->uploadFiles($files);
             \DB::commit();
             return $obj;
         } catch (\Exception $e) {
             if (isset($obj)) {
-                $obj->deleteFiles($files);
+                //excluir os arquivos de uploads
             }
             \DB::rollBack();
             throw $e;
@@ -62,19 +63,16 @@ class Video extends Model
             static::handleRelations($this, $attributes);
             if ($saved) {
                 $this->uploadFiles($files);
+                //excluir os antigos
             }
             \DB::commit();
-        if ($saved && count($files)) {
-                $this->deleteOldFiles();
-            }
             return $saved;
         } catch (\Exception $e) {
-            $this->deleteFiles($files);
+            //excluir os arquivos de uploads
             \DB::rollBack();
             throw $e;
         }
     }
-
 
     public static function handleRelations(Video $video, array $attributes)
     {
@@ -85,7 +83,8 @@ class Video extends Model
             $video->genres()->sync($attributes['genres_id']);
         }
     }
-    
+
+
     public function categories()
     {
         return $this->belongsToMany(Category::class)->withTrashed();
@@ -98,6 +97,6 @@ class Video extends Model
 
     protected function uploadDir()
     {
-        return "1";
+        return $this->id;
     }
 }

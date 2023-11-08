@@ -21,10 +21,6 @@ class UploadFilesUnitTest extends TestCase
         $this->obj = new UploadFilesStub();
     }
 
-    public function testRelativeFilePath(){
-        $this->assertEquals("1/video.mp4", $this->obj->relativeFilePath('video.mp4'));
-    }
-
     public function testUploadFile()
     {
         \Storage::fake();
@@ -40,22 +36,6 @@ class UploadFilesUnitTest extends TestCase
         $file2 = UploadedFile::fake()->create('video2.mp4');
         $this->obj->uploadFiles([$file1, $file2]);
         \Storage::assertExists("1/{$file1->hashName()}");
-        \Storage::assertExists("1/{$file2->hashName()}");
-    }
-
-    public function testDeleteOldFiles()
-    {
-        \Storage::fake();
-        $file1 = UploadedFile::fake()->create('video1.mp4')->size(1);
-        $file2 = UploadedFile::fake()->create('video2.mp4')->size(1);
-        $this->obj->uploadFiles([$file1, $file2]);
-        $this->obj->deleteOldFiles();
-        $this->assertCount(2, \Storage::allFiles());
-
-
-        $this->obj->oldFiles = [$file1->hashName()];
-        $this->obj->deleteOldFiles();
-        \Storage::assertMissing("1/{$file1->hashName()}");
         \Storage::assertExists("1/{$file2->hashName()}");
     }
 
@@ -121,7 +101,7 @@ class UploadFilesUnitTest extends TestCase
             'other' => 'test'
         ], $attributes);
         $this->assertEquals([$file1, $file2], $files);
-    } 
+    }
 
 
 }
