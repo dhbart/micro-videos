@@ -13,6 +13,6 @@ $factory->define(Video::class, function (Faker $faker) {
         'year_launched' => rand(1895, 2023),
         'opened' => rand(0, 1),
         'rating' => $rating,
-        'duration' => rand(1, 30),
+        'duration' => rand(1, 30)
     ];
 });
